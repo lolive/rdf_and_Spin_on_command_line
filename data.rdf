@@ -3,22 +3,14 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sp: <http://spinrdf.org/sp#> .
 @prefix spin: <http://spinrdf.org/spin#> .
-@prefix spinx: <http://spinrdf.org/spinx#> .
 @prefix spl: <http://spinrdf.org/spl#> .
 @prefix unnamed: <http://example.org/unnamed#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix edm: <http://www.europeana.eu/schemas/edm/> .
 
-
-unnamed:Joconde
-  rdf:type unnamed:CHO ;
-  unnamed:CHO2Museum unnamed:Louvre ;
-  unnamed:CHO2Museum unnamed:Prado ;
-  rdfs:label "La Joconde" ;
-.
-unnamed:Louvre
-  rdf:type unnamed:Museum ;
-  rdfs:label "Louvre" ;
-.
-unnamed:Prado
-  rdf:type unnamed:Museum ;
-.
+#Contain trailing whitespaces => KO
+edm:resource a unnamed:CHO ; edm:isShownAt " aValue" .
+edm:resource2 a unnamed:CHO ; edm:isShownAt "aValue " .
+edm:resource3 a unnamed:CHO ; edm:isShownAt " aValue " .
+#Contains no trailing whitespace => OK
+edm:resource4 a unnamed:CHO ; edm:isShownAt "aValue" .
