@@ -1,111 +1,41 @@
-# imports: http://spinrdf.org/spinx
+# baseURI: http://example.org/unnamed
+# imports: http://spinrdf.org/spin
 
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sp: <http://spinrdf.org/sp#> .
 @prefix spin: <http://spinrdf.org/spin#> .
-@prefix spinx: <http://spinrdf.org/spinx#> .
 @prefix spl: <http://spinrdf.org/spl#> .
 @prefix unnamed: <http://example.org/unnamed#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix edm: <http://www.europeana.eu/schemas/edm/> .
 
 <http://example.org/unnamed>
   rdf:type owl:Ontology ;
-  owl:imports <http://spinrdf.org/spinx> ;
+  owl:imports <http://spinrdf.org/spin> ;
   owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
 .
 unnamed:CHO
   rdf:type owl:Class ;
-  spin:constraint [
-      rdf:type unnamed:CHOmustbeinonlyonemuseum ;
-    ] ;
-  spin:constraint [
-      rdf:type sp:Ask ;
-      sp:where (
-          [
-            sp:object [
-                sp:varName "value"^^xsd:string ;
-              ] ;
-            sp:predicate [
-                sp:varName "literalProperty"^^xsd:string ;
-              ] ;
-            sp:subject spin:_this ;
-          ]
-          [
-            rdf:type sp:Filter ;
-            sp:expression [
-                rdf:type sp:and ;
-                sp:arg1 [
-                    rdf:type sp:isLiteral ;
-                    sp:arg1 [
-                        sp:varName "value"^^xsd:string ;
-                      ] ;
-                  ] ;
-                sp:arg2 [
-                    rdf:type sp:regex ;
-                    sp:arg1 [
-                        sp:varName "value"^^xsd:string ;
-                      ] ;
-                    sp:arg2 "( +.*)|(.* +)" ;
-                  ] ;
-              ] ;
-          ]
-        ) ;
-      rdfs:comment "no trailing whitespace"^^xsd:string ;
-    ] ;
-  rdfs:subClassOf owl:Thing ;
-.
-unnamed:CHO2Museum
-  rdf:type owl:ObjectProperty ;
-  rdfs:domain unnamed:CHO ;
-  rdfs:range unnamed:Museum ;
-.
-unnamed:CHOmustbeinonlyonemuseum
-  rdf:type spin:AskTemplate ;
-  spin:body [
-      rdf:type sp:Ask ;
-      sp:where (
-          [
-            sp:object [
-                sp:varName "Museum1"^^xsd:string ;
-              ] ;
-            sp:predicate unnamed:CHO2Museum ;
-            sp:subject spin:_this ;
-          ]
-          [
-            sp:object [
-                sp:varName "Museum2"^^xsd:string ;
-              ] ;
-            sp:predicate unnamed:CHO2Museum ;
-            sp:subject spin:_this ;
-          ]
-          [
-            rdf:type sp:Filter ;
-            sp:expression [
-                rdf:type sp:ne ;
-                sp:arg1 [
-                    sp:varName "Museum1"^^xsd:string ;
-                  ] ;
-                sp:arg2 [
-                    sp:varName "Museum2"^^xsd:string ;
-                  ] ;
-              ] ;
-          ]
-        ) ;
-      rdfs:comment "CHO must be in only one museum"^^xsd:string ;
-    ] ;
-  spin:labelTemplate "CHO must be in only one museum"^^xsd:string ;
-  rdfs:comment "CHO must be in only one museum"^^xsd:string ;
-  rdfs:subClassOf spin:AskTemplates ;
-.
-unnamed:CHOtoMuseum
-  rdf:type rdfs:Class ;
-  rdfs:domain unnamed:CHO ;
-  rdfs:range unnamed:Museum ;
-  rdfs:subClassOf rdf:Property ;
-.
-unnamed:Museum
-  rdf:type owl:Class ;
-  rdfs:subClassOf owl:Thing ;
-.
+  spin:constraint
+  [ a       sp:Construct ;
+    sp:text """
+               CONSTRUCT {
+                           _:violation a                  spin:ConstraintViolation ;
+                                       spin:violationRoot ?this ;
+                                       spin:violationPath ?this ;
+                                       rdfs:label         "Must have either edm:isShownAt or edm:isShownBy"
+               } WHERE { 
+                           select ?this ?o1 ?o2 where {
+                                                          ?this rdf:type unnamed:CHO .
+                                                          ?this edm:isShownAt ?o1 .
+                                                          ?this edm:isShownBy ?o2 .       
+                           }
+               }
+            """
+  ] .
+  
+
+
+
